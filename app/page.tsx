@@ -1,103 +1,410 @@
-import Image from "next/image";
+"use client"
+
+import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [isDark, setIsDark] = useState(true)
+  const [activeSection, setActiveSection] = useState("")
+  const sectionsRef = useRef<(HTMLElement | null)[]>([])
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDark)
+  }, [isDark])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate-fade-in-up")
+            setActiveSection(entry.target.id)
+          }
+        })
+      },
+      { threshold: 0.3, rootMargin: "0px 0px -20% 0px" },
+    )
+
+    sectionsRef.current.forEach((section) => {
+      if (section) observer.observe(section)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const toggleTheme = () => {
+    setIsDark(!isDark)
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground relative">
+      <nav className="fixed left-8 top-1/2 -translate-y-1/2 z-10 hidden lg:block">
+        <div className="flex flex-col gap-4">
+          {["intro", "work", "thoughts", "connect"].map((section) => (
+            <button
+              key={section}
+              onClick={() => document.getElementById(section)?.scrollIntoView({ behavior: "smooth" })}
+              className={`w-2 h-8 rounded-full transition-all duration-500 ${
+                activeSection === section ? "bg-foreground" : "bg-muted-foreground/30 hover:bg-muted-foreground/60"
+              }`}
+              aria-label={`Navigate to ${section}`}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          ))}
         </div>
+      </nav>
+
+      <main className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-16">
+        <header
+          id="intro"
+          ref={(el) => (sectionsRef.current[0] = el)}
+          className="min-h-screen flex items-center opacity-0"
+        >
+          <div className="grid lg:grid-cols-5 gap-12 sm:gap-16 w-full">
+            <div className="lg:col-span-3 space-y-6 sm:space-y-8">
+              <div className="space-y-3 sm:space-y-2">
+                <div className="text-sm text-muted-foreground font-mono tracking-wider">PORTFOLIO / 2025</div>
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight">
+                  Shivam
+                  <br />
+                  <span className="text-muted-foreground">Bhavsar</span>
+                </h1>
+              </div>
+
+              <div className="space-y-6 max-w-md">
+                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                  DevOps Engineer passionate about leveraging cutting-edge technologies to drive automation and efficiency. Experienced in AWS, Kubernetes, Jenkins, Docker, Ansible, Terraform, Karpenter, Autoscaling, AWS infrastructure, cost optimization, Istio, networking, Bash scripting, and Linux. Eager to learn and adopt new tools, continuously improving processes and infrastructure in the dynamic field of DevOps.
+                  {/* <span className="text-foreground"> design</span>,<span className="text-foreground"> technology</span>,
+                  and
+                  <span className="text-foreground"> user experience</span>. */}
+                </p>
+
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    Available for work
+                  </div>
+                  <div>India</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-2 flex flex-col justify-end space-y-6 sm:space-y-8 mt-8 lg:mt-0">
+              <div className="space-y-4">
+                <div className="text-sm text-muted-foreground font-mono">CURRENTLY</div>
+                <div className="space-y-2">
+                  <div className="text-foreground">DevSecOps Engineer </div>
+                  <div className="text-muted-foreground">@ FinTech Org</div>
+                  <div className="text-xs text-muted-foreground">2025 Feb — Present</div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="text-sm text-muted-foreground font-mono">FOCUS</div>
+                <div className="flex flex-wrap gap-2">
+                  {["Kubernetes", "AWS", "Jenkins", "Terraform","AWS infrastructure through Terraform","Istio","Ansible","Docker","Autoscaling","AWS Cost optimization","CI/CD","Prometheus","Grafana","AWS CloudFormation","Amazon Web Services(AWS)","Elastic Stack(ELK)","Fluentd","Atlantis","Trivy","ArgoCD","GitHub Actions"].map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-3 py-1 text-xs border border-border rounded-full hover:border-muted-foreground/50 transition-colors duration-300"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section
+          id="work"
+          ref={(el) => (sectionsRef.current[1] = el)}
+          className="min-h-screen py-20 sm:py-32 opacity-0"
+        >
+          <div className="space-y-12 sm:space-y-16">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <h2 className="text-3xl sm:text-4xl font-light">Selected Work</h2>
+              <div className="text-sm text-muted-foreground font-mono">Feb - 2025</div>
+            </div>
+
+            <div className="space-y-8 sm:space-y-12">
+              {[
+                {
+                  year: "2025",
+                  month: "Feb",
+                  role: "DevSecOps Engineer 1",
+                  company: "FinTech Org",
+                  description: "Working on enhancing security and efficiency of CI/CD pipelines, infrastructure as code, and cloud infrastructure management.",
+                  tech: ["Kubernetes","Terraform","Jenkins","Ansible", "Docker", "Prometheus","Grafana","AWS CloudFormation","Amazon Web Services(AWS)","Elastic Stack(ELK)","Fluentd","Atlantis","Trivy","ArgoCD","GitHub Actions","VPA Vertical Pod Autoscalling","HPA Horizontal Pod AutoScalling","Karpenter","Keda"],
+                },
+                {
+                  year: "2024",
+                  month: "December",
+                  role: "Frontend Engineer Intern",
+                  company: "VIPASO",
+                  description: "Built performant interfaces for project management and team collaboration.",
+                  tech: ["React", "Node.js", "Framer Motion"," Tailwind CSS"],
+                },
+              ].map((job, index) => (
+                <div
+                  key={index}
+                  className="group grid lg:grid-cols-12 gap-4 sm:gap-8 py-6 sm:py-8 border-b border-border/50 hover:border-border transition-colors duration-500"
+                >
+                  <div className="lg:col-span-2">
+                    <div className="text-xl sm:text-2xl font-light text-muted-foreground group-hover:text-foreground transition-colors duration-500">
+                      {job.year}
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-6 space-y-3">
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-medium">{job.role}</h3>
+                      <div className="text-muted-foreground">{job.company}</div>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed max-w-lg">{job.description}</p>
+                  </div>
+
+                  <div className="lg:col-span-4 flex flex-wrap gap-2 lg:justify-end mt-2 lg:mt-0">
+                    {job.tech.map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-2 py-1 text-xs text-muted-foreground rounded group-hover:border-muted-foreground/50 transition-colors duration-500"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Education Section */}
+        <section
+          id="education"
+          ref={(el) => (sectionsRef.current[4] = el)}
+          className="min-h-[300px] py-20 sm:py-32 opacity-0"
+        >
+          <div className="space-y-12 sm:space-y-16">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <h2 className="text-3xl sm:text-4xl font-light">Education</h2>
+              <div className="text-sm text-muted-foreground font-mono">SRM Institute of Science and Technology, Chennai, Tamil Nadu, India</div>
+            </div>
+            <div className="space-y-8 sm:space-y-12">
+              <div className="group grid lg:grid-cols-12 gap-4 sm:gap-8 py-6 sm:py-8 border-b border-border/50 hover:border-border transition-colors duration-500">
+                <div className="lg:col-span-2">
+                  <div className="text-xl sm:text-2xl font-light text-muted-foreground group-hover:text-foreground transition-colors duration-500">
+                    2021 - 2025
+                  </div>
+                </div>
+                <div className="lg:col-span-6 space-y-3">
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-medium">Bachelor of Technology</h3>
+                    <div className="text-muted-foreground">SRM Institute of Science and Technology, Chennai , Tamil Nadu, India</div>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed max-w-lg">
+                    Graduated with a focus on computer science and engineering fundamentals, building a strong foundation for a career in DevOps and cloud technologies.
+                  </p>
+                </div>
+                <div className="lg:col-span-4 flex flex-wrap gap-2 lg:justify-end mt-2 lg:mt-0">
+                  <span className="px-2 py-1 text-xs text-muted-foreground rounded group-hover:border-muted-foreground/50 transition-colors duration-500">
+                    CGPA: 8.5/10
+                  </span>
+                  <span className="px-2 py-1 text-xs text-muted-foreground rounded group-hover:border-muted-foreground/50 transition-colors duration-500">
+                    Computer Science
+                  </span>
+                  <span className="px-2 py-1 text-xs text-muted-foreground rounded group-hover:border-muted-foreground/50 transition-colors duration-500">
+                    Engineering
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          id="thoughts"
+          ref={(el) => (sectionsRef.current[2] = el)}
+          className="min-h-screen py-20 sm:py-32 opacity-0"
+        >
+          <div className="space-y-12 sm:space-y-16">
+            <h2 className="text-3xl sm:text-4xl font-light">Projects</h2>
+
+            <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
+              {[
+                {
+                  title: "AWS DevOps Project: CI/CD Pipeline with Jenkins, Docker, and Kubernetes |",
+                  excerpt: "Configured and managed a CI/CD pipeline using Jenkins on AWS EC2, ensuring seamless integration and continuous delivery of a MAVEN web application. • Automated deployment processes using Docker and Kubernetes, improving efficiency and scalability of application deployments",
+                },
+                {
+                  title: "AWS Lift and Shift Project",
+                  excerpt: "Migrated Multi-Tier Web Application: Successfully transitioned the vProfile application stack from a local data center to AWS cloud, utilizing EC2 instances, Elastic Load Balancer, and Auto Scaling for enhanced scalability and reliability.",
+                },
+                {
+                  title: "Performance-First Development",
+                  excerpt: "Why performance should be a first-class citizen in your development workflow.",
+                  date: "Oct 2024",
+                  readTime: "6 min",
+                },
+                {
+                  title: "The Art of Code Review",
+                  excerpt: "Building better software through thoughtful and constructive code reviews.",
+                  date: "Sep 2024",
+                  readTime: "4 min",
+                },
+              ].map((post, index) => (
+                <article
+                  key={index}
+                  className="group p-6 sm:p-8 border border-border rounded-lg hover:border-muted-foreground/50 transition-all duration-500 hover:shadow-lg cursor-pointer"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
+                      <span>{post.date}</span>
+                      <span>{post.readTime}</span>
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl font-medium group-hover:text-muted-foreground transition-colors duration-300">
+                      {post.title}
+                    </h3>
+
+                    <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
+
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                      <span>Read more</span>
+                      <svg
+                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="connect" ref={(el) => (sectionsRef.current[3] = el)} className="py-20 sm:py-32 opacity-0">
+          <div className="grid lg:grid-cols-2 gap-12 sm:gap-16">
+            <div className="space-y-6 sm:space-y-8">
+              <h2 className="text-3xl sm:text-4xl font-light">Let's Connect</h2>
+
+              <div className="space-y-6">
+                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                  Always interested in new opportunities, collaborations, and conversations about technology and New Tools.
+                </p>
+
+                <div className="space-y-4">
+                  <Link
+                    href="mailto:shivambuggs@gmail.com"
+                    className="group flex items-center gap-3 text-foreground hover:text-muted-foreground transition-colors duration-300"
+                  >
+                    <span className="text-base sm:text-lg">shivambuggs@gmail.com</span>
+                    <svg
+                      className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6 sm:space-y-8">
+              <div className="text-sm text-muted-foreground font-mono">ELSEWHERE</div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { name: "GitHub", handle: "@shivamBhavsar-cmd", url: "https://github.com/shivamBhavsar-cmd" },
+                  { name: "v0.dev", handle: "@shivam-bhavsar", url: "#" },
+                  { name: "HubSpot Community", handle: "", url: "#" },
+                  { name: "LinkedIn", handle: "shivam-bhavsar", url: "https://www.linkedin.com/in/shivam-bhavsar-561a55223/" },
+                ].map((social) => (
+                  <Link
+                    key={social.name}
+                    href={social.url}
+                    className="group p-4 border border-border rounded-lg hover:border-muted-foreground/50 transition-all duration-300 hover:shadow-sm"
+                  >
+                    <div className="space-y-2">
+                      <div className="text-foreground group-hover:text-muted-foreground transition-colors duration-300">
+                        {social.name}
+                      </div>
+                      <div className="text-sm text-muted-foreground">{social.handle}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer className="py-12 sm:py-16 border-t border-border">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-8">
+            <div className="space-y-2">
+              <div className="text-sm text-muted-foreground">© 2025 Shivam Bhavsar. All rights reserved.</div>
+              <div className="text-xs text-muted-foreground">Built with v0.dev by Shivam Bhavsar</div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <button
+                onClick={toggleTheme}
+                className="group p-3 rounded-lg border border-border hover:border-muted-foreground/50 transition-all duration-300"
+                aria-label="Toggle theme"
+              >
+                {isDark ? (
+                  <svg
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-300"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-300"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                  </svg>
+                )}
+              </button>
+
+              <button className="group p-3 rounded-lg border border-border hover:border-muted-foreground/50 transition-all duration-300">
+                <svg
+                  className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </footer>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      <div className="fixed bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none"></div>
     </div>
-  );
+  )
 }
