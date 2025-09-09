@@ -3,6 +3,24 @@
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
+const blogs = [
+  {
+    title: "How to Build a CI/CD Pipeline with Jenkins",
+    excerpt: "Step-by-step guide to automate deployments using Jenkins and Docker.",
+    url: "/blog/jenkins-cicd"
+  },
+  {
+    title: "AWS Cost Optimization Strategies",
+    excerpt: "Tips and tools to reduce your AWS bill without sacrificing performance.",
+    url: "/blog/aws-cost"
+  },
+  {
+    title: "Getting Started with Kubernetes",
+    excerpt: "A beginner's guide to container orchestration with Kubernetes.",
+    url: "/blog/kubernetes-intro"
+  }
+]
+
 export default function Home() {
   const [isDark, setIsDark] = useState(true)
   const [activeSection, setActiveSection] = useState("")
@@ -50,6 +68,17 @@ export default function Home() {
               aria-label={`Navigate to ${section}`}
             />
           ))}
+          {/* Blog Button */}
+          <a
+            href="/blog"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-2 h-8 rounded-full bg-blue-500 hover:bg-blue-700 transition-all duration-500 flex items-center justify-center"
+            aria-label="Open Blog"
+          >
+            <span className="sr-only">Blog</span>
+            <svg width="16" height="16" fill="currentColor"><circle cx="8" cy="8" r="6"/></svg>
+          </a>
         </div>
       </nav>
 
@@ -73,9 +102,6 @@ export default function Home() {
               <div className="space-y-6 max-w-md">
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
                   DevOps Engineer passionate about leveraging cutting-edge technologies to drive automation and efficiency. Experienced in AWS, Kubernetes, Jenkins, Docker, Ansible, Terraform, Karpenter, Autoscaling, AWS infrastructure, cost optimization, Istio, networking, Bash scripting, and Linux. Eager to learn and adopt new tools, continuously improving processes and infrastructure in the dynamic field of DevOps.
-                  {/* <span className="text-foreground"> design</span>,<span className="text-foreground"> technology</span>,
-                  and
-                  <span className="text-foreground"> user experience</span>. */}
                 </p>
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
